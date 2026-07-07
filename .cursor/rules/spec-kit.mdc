@@ -1,0 +1,53 @@
+---
+description: Spec-Driven Development (GitHub Spec Kit) — обязательный workflow для hh-cursor
+alwaysApply: true
+---
+
+# Spec Kit — hh-cursor
+
+Проект **hh-cursor**: автоматизация hh.ru через агента Cursor (Browser Tab / MCP). Spec Kit установлен (`cursor-agent`, `.specify/`, skills в `.cursor/skills/speckit-*`).
+
+Перед реализацией — SDD. **Не пиши код без артефактов.** Не делай git commit — только по явной просьбе пользователя.
+
+## Где что лежит
+
+| Артефакт | Путь |
+|----------|------|
+| Конституция | `.specify/memory/constitution.md` |
+| Шаблоны | `.specify/templates/` |
+| Скрипты | `.specify/scripts/bash/` |
+| Skills (slash-команды) | `.cursor/skills/speckit-*/SKILL.md` |
+| Spec / Plan / Tasks фичи | `specs/###-feature-name/` |
+
+## Workflow
+
+**Минимум:** `/speckit.specify` → `/speckit.plan` → `/speckit.tasks` → `/speckit.implement`
+
+**Нетривиальные фичи:** constitution → specify → clarify → plan → checklist → tasks → analyze → implement → converge
+
+Новая фича (ветка + папка в `specs/`):
+
+```bash
+.specify/scripts/bash/create-new-feature.sh "краткое-имя-фичи"
+```
+
+## Правила агента
+
+1. **Spec** — только what/why: user stories (P1/P2/P3), FR/SC с ID, Given/When/Then, edge cases. Без стека и путей к файлам.
+2. **Plan** — после spec; Constitution Check по `.specify/memory/constitution.md`. Шаблон: `.specify/templates/plan-template.md`.
+3. **Tasks** — ID `T001`, метки `[P]` и `[USn]`, точные пути, checkpoint после каждой story. Шаблон: `.specify/templates/tasks-template.md`.
+4. **Implement** — строго по `tasks.md`; новые требования — сначала обнови spec.
+5. **MVP** — сначала P1 + Independent Test, затем остальные stories.
+6. **Неясности** — `[NEEDS CLARIFICATION]` в spec, вопросы до plan.
+7. **Scope** — минимальный diff; не трогай несвязанный код.
+8. **Секреты** — пароли, cookies, токены не в репо; только env / локальные файлы в `.gitignore`.
+9. **Тесты** — без комментариев внутри тестов.
+10. **Браузер** — сценарии hh.ru через Browser Tab (см. README); в plan указывай шаги UI и точки остановки при captcha/login.
+
+## Конституция
+
+`constitution.md` пока шаблон — перед первой фичей запусти `/speckit.constitution` с принципами проекта (browser-first, минимальный scope, без секретов в репо).
+
+## Если slash-команды недоступны
+
+Следуй соответствующему `SKILL.md` в `.cursor/skills/` и шаблонам в `.specify/templates/`.
