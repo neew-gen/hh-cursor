@@ -1,0 +1,10 @@
+# Local resume profile artifacts (per target role)
+artifacts/resume-profile/
+
+# Drafts and browser extracts
+tmp/
+
+# Python
+__pycache__/
+*.py[cod]
+.Python

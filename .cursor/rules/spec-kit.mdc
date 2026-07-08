@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Spec Kit — hh-cursor
 
-Проект **hh-cursor**: автоматизация hh.ru через агента Cursor (Browser Tab / MCP). Spec Kit установлен (`cursor-agent`, `.specify/`, skills в `.cursor/skills/speckit-*`).
+Проект **hh-cursor**: автоматизация hh.ru через агента Cursor (Browser Tab / MCP). Spec Kit установлен (`cursor-agent`, `.specify/`).
 
 Перед реализацией — SDD. **Не пиши код без артефактов.** Не делай git commit — только по явной просьбе пользователя.
 
@@ -16,12 +16,19 @@ alwaysApply: true
 | Конституция | `.specify/memory/constitution.md` |
 | Шаблоны | `.specify/templates/` |
 | Скрипты | `.specify/scripts/bash/` |
-| Skills (slash-команды) | `.cursor/skills/speckit-*/SKILL.md` |
+| Skills фич (slash `/`) | `.cursor/skills/*/SKILL.md` — только skills, привязанные к фичам |
+| SDD skills (без slash) | `.specify/skills/speckit-*/SKILL.md` — specify, plan, tasks, implement… |
 | Spec / Plan / Tasks фичи | `specs/###-feature-name/` |
+
+## Skills в slash-меню
+
+В `.cursor/skills/` лежат **только skills фич** (сейчас: `/resume-profile` для 002). Общие SDD-skills Spec Kit — в `.specify/skills/` и **не** попадают в autocomplete `/`.
+
+Новый skill фичи: `.cursor/skills/<имя-фичи>/SKILL.md` (имя = slug из `specs/###-<имя-фичи>/`) + запись в `specs/###-*/tasks.md`.
 
 ## Workflow
 
-**Минимум:** `/speckit.specify` → `/speckit.plan` → `/speckit.tasks` → `/speckit.implement`
+**Минимум SDD:** specify → plan → tasks → implement (читай `.specify/skills/speckit-*/SKILL.md` по шагу)
 
 **Нетривиальные фичи:** constitution → specify → clarify → plan → checklist → tasks → analyze → implement → converge
 
@@ -46,8 +53,8 @@ alwaysApply: true
 
 ## Конституция
 
-`constitution.md` пока шаблон — перед первой фичей запусти `/speckit.constitution` с принципами проекта (browser-first, минимальный scope, без секретов в репо).
+`constitution.md` пока шаблон — перед первой фичей пройди шаг constitution (`.specify/skills/speckit-constitution/SKILL.md`) с принципами проекта (browser-first, минимальный scope, без секретов в репо).
 
-## Если slash-команды недоступны
+## SDD без slash
 
-Следуй соответствующему `SKILL.md` в `.cursor/skills/` и шаблонам в `.specify/templates/`.
+Следуй `SKILL.md` из `.specify/skills/` и шаблонам в `.specify/templates/`.
