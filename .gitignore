@@ -1,6 +1,9 @@
 # Local resume profile artifacts (per target role)
 artifacts/resume-profile/
 
+# Fill plans and browser fill reports (feature 003)
+artifacts/resume-create/
+
 # Drafts and browser extracts
 tmp/
 

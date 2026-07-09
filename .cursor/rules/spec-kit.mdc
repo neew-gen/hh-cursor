@@ -22,7 +22,7 @@ alwaysApply: true
 
 ## Skills в slash-меню
 
-В `.cursor/skills/` лежат **только skills фич** (сейчас: `/resume-profile` для 002). Общие SDD-skills Spec Kit — в `.specify/skills/` и **не** попадают в autocomplete `/`.
+В `.cursor/skills/` лежат **только skills фич** (сейчас: `/resume-profile` для 002, `/resume-create` для 003). Общие SDD-skills Spec Kit — в `.specify/skills/` и **не** попадают в autocomplete `/`.
 
 Новый skill фичи: `.cursor/skills/<имя-фичи>/SKILL.md` (имя = slug из `specs/###-<имя-фичи>/`) + запись в `specs/###-*/tasks.md`.
 

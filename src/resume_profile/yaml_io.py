@@ -151,7 +151,7 @@ def _parse_mapping(lines: list[str], index: int, indent: int) -> tuple[dict[str,
                 break
             next_line = lines[index]
             next_indent = _indent(next_line)
-            if next_indent <= indent:
+            if next_indent <= indent and not next_line.strip().startswith("- "):
                 result[key] = []
                 continue
             if next_line.strip().startswith("- "):
