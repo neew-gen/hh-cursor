@@ -1,0 +1,70 @@
+collected_at: "2026-07-09T12:31:08+00:00"
+input_mode: questionnaire_with_link
+resume_link: "https://hh.ru/resume/sample123"
+target_role: Frontend Developer
+specializations:
+- "Программист, разработчик"
+work_experience_status: has_experience
+work_experience:
+  - company: Acme Corp
+    position: Frontend Developer
+    start_date: Январь 2022
+    end_date: Декабрь 2023
+    is_current: false
+    description: |
+      - Разрабатывал продуктовые интерфейсы и интегрировал REST API
+      - Улучшал производительность и поддерживал UI Kit
+      
+      Стек: JavaScript, TypeScript, Vue.js, REST API
+    provenance: from_resume_link
+  - company: Beta LLC
+    position: Senior Frontend Developer
+    start_date: Январь 2024
+    end_date: null
+    is_current: true
+    description: |
+      - Разрабатываю внутренние сервисы и провожу код-ревью
+      - Настраиваю процессы разработки и сопровождаю релизы
+      
+      Стек: TypeScript, Vue.js, Pinia, Docker
+    provenance: from_resume_link
+skills:
+  hard:
+    - name: JavaScript
+      level: medium
+      provenance: from_resume_link
+    - name: TypeScript
+      level: advanced
+      provenance: from_resume_link
+    - name: Vue.js
+      level: advanced
+      provenance: from_resume_link
+    - name: REST API
+      level: medium
+      provenance: from_resume_link
+  soft:
+education:
+  - institution: MSU
+    degree: Bachelor
+    specialty: Computer Science
+    graduation_year: 2020
+    provenance: from_resume_link
+no_formal_education: false
+about_me: |
+  Frontend-разработчик с опытом создания пользовательских интерфейсов и интеграции API.
+  Люблю писать понятный код, улучшать процессы разработки и доводить задачи до production.
+work_preferences:
+  null
+languages:
+  - name: Русский
+    level: Родной
+  - name: Английский
+    level: B2
+additional_education:
+portfolio_links:
+personal_links:
+limitations:
+sources:
+  resume_link_used: true
+  fields_from_link: 12
+  fields_from_user: 0

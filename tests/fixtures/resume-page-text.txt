@@ -1,0 +1,24 @@
+Frontend Developer
+Желаемая должность: Frontend Developer
+Ключевые навыки
+JavaScript, TypeScript, Vue.js, REST API
+Опыт работы
+Acme Corp
+2 года
+Frontend Developer
+Январь 2022 — Декабрь 2023
+- Разрабатывал продуктовые интерфейсы
+- Интегрировал REST API
+Beta LLC
+1 год 6 месяцев
+Senior Frontend Developer
+Январь 2024 — по настоящее время
+- Разрабатываю внутренние сервисы
+- Провожу код-ревью и сопровождаю релизы
+Образование
+MSU
+Computer Science
+Bachelor
+2020
+О себе
+Пишу понятный код, люблю улучшать процессы разработки.
