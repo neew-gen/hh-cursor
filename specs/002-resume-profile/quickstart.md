@@ -9,23 +9,21 @@
 ## Agent Workflow
 
 1. Run skill `/resume-profile` (or ask agent to collect resume profile data).
-2. Agent should prefer `bootstrap`, which checks for saved artifacts and immediately creates `tmp/profile-draft.json` when none exist.
-3. If `bootstrap` reports saved artifacts, answer the skills-mode question and optionally choose a profile to supplement.
-4. Answer Q1 by either pasting the hh.ru resume link immediately in the same reply, or, if the form captured only the intent to provide a link, sending the URL in the very next chat message without any repeated Q1 step; skipping the step is also allowed.
-5. If link provided: agent opens hh.ru in Browser Tab, clicks `Скачать`, chooses
+2. Agent initializes a brand-new `tmp/profile-draft.json` for every run.
+3. Answer Q1 by either pasting the hh.ru resume link immediately in the same reply, or, if the form captured only the intent to provide a link, sending the URL in the very next chat message without any repeated Q1 step; skipping the step is also allowed.
+4. If link provided: agent opens hh.ru in Browser Tab, clicks `Скачать`, chooses
    `Простой текст · txt`, follows the `resume_converter/...type=txt` URL, parses the
    returned HTML document, then merges extracted fields into the draft.
-6. Answer gap questions until none remain.
-7. Verify `artifacts/resume-profile/<target-role-slug>.yaml` exists.
+5. Answer gap questions until none remain.
+6. Verify a new artifact file exists in `artifacts/resume-profile/`.
 
 ## Recommended Start Command
 
 ```bash
-PYTHONPATH=src python3 -m resume_profile.cli bootstrap \
+PYTHONPATH=src python3 -m resume_profile.cli init-draft \
+  --skills-mode new \
   --output tmp/profile-draft.json
 ```
-
-If `bootstrap` is unavailable, fall back to `has-artifacts` followed by `init-draft`.
 
 ## CLI (manual / agent-assisted)
 
@@ -43,7 +41,8 @@ PYTHONPATH=src python3 -m resume_profile.cli write \
   --output artifacts/resume-profile/<slug>.yaml
 ```
 
-Or omit `--output` to derive path from `target_role`.
+Or omit `--output` to derive path from `target_role`. If that slug already exists, the write step
+will create `(<n>)` suffixed filename instead of overwriting the previous artifact.
 
 Parse downloaded resume HTML into draft:
 

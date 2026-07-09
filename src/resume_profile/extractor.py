@@ -62,6 +62,64 @@ def _normalize_level(raw: str) -> str:
     return SKILL_LEVEL_MAP.get(key, "medium")
 
 
+def _dedupe_preserve_order(values: list[str]) -> list[str]:
+    unique: list[str] = []
+    seen: set[str] = set()
+    for value in values:
+        normalized = value.strip()
+        if not normalized:
+            continue
+        key = normalized.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(normalized)
+    return unique
+
+
+def _dedupe_work_entries(entries: list[WorkExperienceEntry]) -> list[WorkExperienceEntry]:
+    unique: list[WorkExperienceEntry] = []
+    seen: set[tuple[str, str, str, str | None, bool, str]] = set()
+    for entry in entries:
+        key = (
+            entry.company.strip().lower(),
+            entry.position.strip().lower(),
+            entry.start_date.strip().lower(),
+            (entry.end_date or "").strip().lower() or None,
+            entry.is_current,
+            entry.description.strip().lower(),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(entry)
+    return unique
+
+
+def _dedupe_skill_entries(entries: list[SkillEntry]) -> list[SkillEntry]:
+    unique: list[SkillEntry] = []
+    seen: set[str] = set()
+    for entry in entries:
+        key = entry.name.strip().lower()
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        unique.append(entry)
+    return unique
+
+
+def _dedupe_language_entries(entries: list[LanguageEntry]) -> list[LanguageEntry]:
+    unique: list[LanguageEntry] = []
+    seen: set[str] = set()
+    for entry in entries:
+        key = entry.name.strip().lower()
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        unique.append(entry)
+    return unique
+
+
 def extract_resume_content(content: str, resume_link: str | None = None) -> ResumeProfile:
     lowered = content.lower()
     if "<html" in lowered and "resume-experience" in lowered:
@@ -76,7 +134,7 @@ def extract_from_download_html(html_content: str, resume_link: str | None = None
     )
 
     role_match = re.search(
-        r'<p class="resume__position">(.*?)</p>',
+        r'<p[^>]*class="resume__position"[^>]*>(.*?)</p>',
         html_content,
         re.DOTALL | re.IGNORECASE,
     )
@@ -84,15 +142,17 @@ def extract_from_download_html(html_content: str, resume_link: str | None = None
         profile.target_role = _html_to_text(role_match.group(1))
 
     specializations = re.findall(
-        r'<li class="resume-profession-role">(.*?)</li>',
+        r'<li[^>]*class="resume-profession-role"[^>]*>(.*?)</li>',
         html_content,
         re.DOTALL | re.IGNORECASE,
     )
-    profile.specializations = [_html_to_text(item) for item in specializations if _html_to_text(item)]
+    profile.specializations = _dedupe_preserve_order(
+        [_html_to_text(item) for item in specializations if _html_to_text(item)]
+    )
 
     experiences = _extract_work_experience_from_download_html(html_content)
     if experiences:
-        profile.work_experience = experiences
+        profile.work_experience = _dedupe_work_entries(experiences)
         profile.work_experience_status = "has_experience"
 
     education = _extract_education_from_download_html(html_content)
@@ -101,11 +161,11 @@ def extract_from_download_html(html_content: str, resume_link: str | None = None
 
     skills = _extract_skills_from_download_html(html_content)
     if skills:
-        profile.skills_hard = skills
+        profile.skills_hard = _dedupe_skill_entries(skills)
 
     languages = _extract_languages_from_download_html(html_content)
     if languages:
-        profile.languages = languages
+        profile.languages = _dedupe_language_entries(languages)
 
     about = _extract_about_me_from_download_html(html_content)
     if about:
@@ -144,11 +204,11 @@ def extract_from_page_text(text: str, resume_link: str | None = None) -> ResumeP
 
     skills = _extract_skills(joined)
     if skills:
-        profile.skills_hard = skills
+        profile.skills_hard = _dedupe_skill_entries(skills)
 
     experiences = _extract_work_experience(joined)
     if experiences:
-        profile.work_experience = experiences
+        profile.work_experience = _dedupe_work_entries(experiences)
         profile.work_experience_status = "has_experience"
 
     education = _extract_education(joined)
@@ -244,27 +304,27 @@ def _parse_date_range(text: str) -> tuple[str, str | None, bool]:
 def _extract_work_experience_from_download_html(html_content: str) -> list[WorkExperienceEntry]:
     entries: list[WorkExperienceEntry] = []
     for block in re.findall(
-        r'<li class="resume-experience">(.*?)</li>',
+        r'<li[^>]*class="resume-experience"[^>]*>(.*?)</li>',
         html_content,
         re.DOTALL | re.IGNORECASE,
     ):
         company_match = re.search(
-            r'<span class="resume-experience__company">\s*(.*?)\s*</span>',
+            r'<span[^>]*class="resume-experience__company"[^>]*>\s*(.*?)\s*</span>',
             block,
             re.DOTALL | re.IGNORECASE,
         )
         position_match = re.search(
-            r'<p class="resume-experience__position">(.*?)</p>',
+            r'<p[^>]*class="resume-experience__position"[^>]*>(.*?)</p>',
             block,
             re.DOTALL | re.IGNORECASE,
         )
         hint_match = re.search(
-            r'<p class="bloko-form-hint">\s*(.*?)\s*</p>',
+            r'<p[^>]*class="bloko-form-hint"[^>]*>\s*(.*?)\s*</p>',
             block,
             re.DOTALL | re.IGNORECASE,
         )
         description_match = re.search(
-            r'<p class="resume-experience__position">.*?</p>\s*<p>(.*?)</p>',
+            r'<p[^>]*class="resume-experience__position"[^>]*>.*?</p>\s*<p[^>]*>(.*?)</p>',
             block,
             re.DOTALL | re.IGNORECASE,
         )
@@ -295,7 +355,7 @@ def _extract_work_experience_from_download_html(html_content: str) -> list[WorkE
 def _extract_education_from_download_html(html_content: str) -> list[EducationEntry]:
     entries: list[EducationEntry] = []
     education_section_match = re.search(
-        r'<p class="resume__block">Образование</p>\s*<ul>(.*?)</ul>',
+        r'<p[^>]*class="resume__block"[^>]*>Образование</p>\s*<ul>(.*?)</ul>',
         html_content,
         re.DOTALL | re.IGNORECASE,
     )
@@ -304,21 +364,21 @@ def _extract_education_from_download_html(html_content: str) -> list[EducationEn
 
     section = education_section_match.group(1)
     for match in re.finditer(
-        r'<li class="resume-education">(.*?)</li>\s*(?:<p>(.*?)</p>)?',
+        r'<li[^>]*class="resume-education"[^>]*>(.*?)</li>\s*(?:<p[^>]*>(.*?)</p>)?',
         section,
         re.DOTALL | re.IGNORECASE,
     ):
         block = match.group(1)
         specialty = _html_to_text(match.group(2) or "")
         institution_match = re.search(
-            r'<span class="resume-education__name">(.*?)</span>',
+            r'<span[^>]*class="resume-education__name"[^>]*>(.*?)</span>',
             block,
             re.DOTALL | re.IGNORECASE,
         )
         hints = [
             _html_to_text(item)
             for item in re.findall(
-                r'<p class="bloko-form-hint">(.*?)</p>',
+                r'<p[^>]*class="bloko-form-hint"[^>]*>(.*?)</p>',
                 block,
                 re.DOTALL | re.IGNORECASE,
             )
@@ -350,7 +410,7 @@ def _extract_education_from_download_html(html_content: str) -> list[EducationEn
 
 def _extract_skills_from_download_html(html_content: str) -> list[SkillEntry]:
     skills_match = re.search(
-        r'<span class="bloko-form-hint">Навыки</span>\s*<p class="resume-skils__item">(.*?)</p>',
+        r'<span[^>]*class="bloko-form-hint"[^>]*>Навыки</span>\s*<p[^>]*class="(?:resume-skils|resume-skills)__item"[^>]*>(.*?)</p>',
         html_content,
         re.DOTALL | re.IGNORECASE,
     )
@@ -372,13 +432,13 @@ def _extract_skills_from_download_html(html_content: str) -> list[SkillEntry]:
         if key in seen:
             continue
         seen.add(key)
-        entries.append(SkillEntry(name=name, level="medium", provenance="from_resume_link"))
+        entries.append(SkillEntry(name=name, level="", provenance="from_resume_link"))
     return entries
 
 
 def _extract_languages_from_download_html(html_content: str) -> list[LanguageEntry]:
     languages_match = re.search(
-        r'<span class="bloko-form-hint">Знание языков</span>\s*<ul class="resume-skils__item">(.*?)</ul>',
+        r'<span[^>]*class="bloko-form-hint"[^>]*>Знание языков</span>\s*<ul[^>]*class="resume-skils__item"[^>]*>(.*?)</ul>',
         html_content,
         re.DOTALL | re.IGNORECASE,
     )
@@ -386,7 +446,7 @@ def _extract_languages_from_download_html(html_content: str) -> list[LanguageEnt
         return []
 
     entries: list[LanguageEntry] = []
-    for block in re.findall(r"<li>(.*?)</li>", languages_match.group(1), re.DOTALL | re.IGNORECASE):
+    for block in re.findall(r"<li[^>]*>(.*?)</li>", languages_match.group(1), re.DOTALL | re.IGNORECASE):
         text = _html_to_text(block)
         if not text:
             continue
@@ -400,7 +460,7 @@ def _extract_languages_from_download_html(html_content: str) -> list[LanguageEnt
 
 def _extract_about_me_from_download_html(html_content: str) -> str:
     about_match = re.search(
-        r'<span class="bloko-form-hint">Обо мне</span>\s*<p class="resume-skils__item">(.*?)</p>',
+        r'<span[^>]*class="bloko-form-hint"[^>]*>Обо мне</span>\s*<p[^>]*class="resume-skils__item"[^>]*>(.*?)</p>',
         html_content,
         re.DOTALL | re.IGNORECASE,
     )
@@ -475,7 +535,7 @@ def _extract_skills(joined: str) -> list[SkillEntry]:
         if not name or len(name) < 2:
             continue
         level_match = re.search(r"\(([^)]+)\)", name)
-        level = "medium"
+        level = ""
         if level_match:
             level = _normalize_level(level_match.group(1))
             name = name[: level_match.start()].strip()

@@ -22,12 +22,13 @@ open "/Applications/Python 3.8/Install Certificates.command"
 
 - Встроенный MCP `cursor-ide-browser` не добавляется в `.cursor/mcp.json` — он включается только через **Browser Automation**.
 
-## Workflow: три шага
+## Workflow: четыре шага
 
 | Шаг | Skill | Артефакт |
 |-----|-------|----------|
 | 1 | resume-intelligence (CLI) | `artifacts/resume-intelligence.md` |
 | 2 | `/resume-profile` | `artifacts/resume-profile/<slug>.yaml` |
 | 3 | `/resume-create` | `artifacts/resume-create/<slug>.yaml` |
+| 4 | `/job-apply` | `artifacts/job-apply/<vacancy-slug>.yaml` |
 
-Подробнее: `specs/003-resume-create/quickstart.md`.
+Подробнее: `specs/003-resume-create/quickstart.md`, `specs/004-job-apply/quickstart.md`.

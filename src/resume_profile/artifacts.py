@@ -19,7 +19,18 @@ def artifact_path(target_role: str) -> Path:
 
 
 def resolve_artifact_path(target_role: str) -> Path:
-    return artifact_path(target_role)
+    base_path = artifact_path(target_role)
+    if not base_path.exists():
+        return base_path
+
+    stem = base_path.stem
+    suffix = base_path.suffix
+    index = 2
+    while True:
+        candidate = base_path.with_name(f"{stem} ({index}){suffix}")
+        if not candidate.exists():
+            return candidate
+        index += 1
 
 
 def has_saved_artifacts() -> bool:

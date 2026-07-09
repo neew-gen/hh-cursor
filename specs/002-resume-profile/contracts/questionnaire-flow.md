@@ -4,24 +4,17 @@
 
 ## Fixed Question
 
-### Q0 — Skills mode (only if saved profiles exist)
+There is no Q0 in the current flow.
 
-First run `has-artifacts`.
+Every `/resume-profile` run starts with a brand-new draft:
 
-If `has_artifacts` is `false`, **skip Q0 entirely** and initialize a brand-new draft with
-`init-draft --skills-mode new`.
+```bash
+PYTHONPATH=src python3 -m resume_profile.cli init-draft \
+  --skills-mode new \
+  --output tmp/profile-draft.json
+```
 
-If `has_artifacts` is `true`, ask:
-
-**Prompt**: «Будет ли этот набор навыков новым или дополнит уже сохранённый профиль?»
-
-**Options**:
-- **Новый набор** (`skills_mode: new`) — заменит навыки
-- **Дополнить** (`skills_mode: append`) — добавит к сохранённым
-
-**On append**: `list-artifacts` → user picks profile → `init-draft --from-artifact ... --skills-mode append`. Skip resume link (Q1) and filled gap steps.
-
-**On new + existing profile**: `init-draft --from-artifact ... --skills-mode new` — other fields kept, skills cleared.
+Existing artifacts are not used as a supplement source for feature 002.
 
 ### Q1 — Resume Link (optional)
 
@@ -92,6 +85,9 @@ PYTHONPATH=src python3 -m resume_profile.cli write --input draft.json
 ```
 
 Default output: `artifacts/resume-profile/<target-role-slug>.yaml`.
+
+If that file already exists, write a new artifact with a numeric suffix in parentheses:
+`<target-role-slug> (2).yaml`, `<target-role-slug> (3).yaml`, and so on.
 
 ## Error Handling
 

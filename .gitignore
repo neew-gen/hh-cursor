@@ -4,6 +4,9 @@ artifacts/resume-profile/
 # Fill plans and browser fill reports (feature 003)
 artifacts/resume-create/
 
+# Application plans and reports (feature 004)
+artifacts/job-apply/
+
 # Drafts and browser extracts
 tmp/
 

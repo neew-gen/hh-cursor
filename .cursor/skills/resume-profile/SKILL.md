@@ -38,80 +38,28 @@ The user sees a questionnaire, not a dev log. **Never narrate internal work in c
 
 ## Workflow
 
-### 0. Q0 — Skills mode (only when saved profiles exist)
+### 0. Initialize new draft
 
-All bootstrap / artifact detection work in this step is **internal only** — see **Agent communication**.
-The first visible user-facing message must be the first actual questionnaire choice:
-- Q0 when saved artifacts exist, OR
-- Q1 resume-link prompt when no saved artifacts exist.
+Always start feature 002 as a **brand-new collection run**.
+Do **not** inspect existing artifacts to decide whether to update, supplement, append, or reuse them.
+Do **not** ask any Q0-like question.
 
-Preferred start command:
-
-```bash
-PYTHONPATH=src python3 -m resume_profile.cli bootstrap \
-  --output tmp/profile-draft.json
-```
-
-- If output contains `"has_artifacts": false`: **do not ask Q0**. The command already initialized a brand-new draft.
-- If output contains `"has_artifacts": true`: ask Q0 and continue with supplement flow below.
-
-Fallback only if `bootstrap` is unavailable or errors before returning usable JSON:
-
-1. Check saved artifacts:
-
-```bash
-PYTHONPATH=src python3 -m resume_profile.cli has-artifacts
-```
-
-2. If `"has_artifacts": false`, initialize a brand-new draft:
+Start command:
 
 ```bash
 PYTHONPATH=src python3 -m resume_profile.cli init-draft \
   --skills-mode new \
   --output tmp/profile-draft.json
 ```
-
-Ask Q0 only when `"has_artifacts": true`. Use `AskQuestion`:
-
-- Prompt: «Будет ли этот набор навыков новым или дополнит уже сохранённый профиль?»
-- Options:
-  - **Новый набор навыков** (`skills_mode: new`) — заменит навыки в профиле
-  - **Дополнить сохранённые навыки** (`skills_mode: append`) — добавит к существующим
-
-Then initialize draft:
-
-**Append** — list saved profiles and load selected artifact:
-
-```bash
-PYTHONPATH=src python3 -m resume_profile.cli list-artifacts
-PYTHONPATH=src python3 -m resume_profile.cli init-draft \
-  --skills-mode append \
-  --from-artifact artifacts/resume-profile/<slug>.yaml \
-  --output tmp/profile-draft.json
-```
-
-**New skills on existing profile** — same `init-draft --from-artifact ... --skills-mode new` (keeps other fields, clears skills for re-entry).
-
-**Brand-new profile** — empty draft:
-
-```bash
-PYTHONPATH=src python3 -m resume_profile.cli init-draft \
-  --skills-mode new \
-  --output tmp/profile-draft.json
-```
-
-When `--from-artifact` is used: **skip Q1 (resume link)** and all gap steps for fields already filled in the loaded draft. Only ask remaining gaps (for append — always ask new skills).
 
 Operational notes:
 
 - Treat background shell completions as internal status, not as a reason to repeat the same user-facing prompt.
 - If a shell command hangs or backgrounds with no output, inspect once, use the documented fallback, and continue the workflow instead of narrating each retry.
-- Once step 0 resolves to a brand-new draft, show Q1 in the same turn with **no** intervening chat text.
+- After draft initialization, show Q1 in the same turn with **no** intervening chat text.
 - Never expose step-0 mechanics to the user; only expose the resulting `AskQuestion`.
 
 ### 1. Q1 — Resume link (optional)
-
-Skip this step when draft `_meta.skip_resume_link` is true (supplement from artifact).
 
 Ask Q1 **only via `AskQuestion`**. No accompanying chat text — see **Agent communication**.
 
@@ -182,8 +130,6 @@ Field merge hints:
 | no_formal_education | `no_formal_education: true` |
 | about_me | `about_me` string, `provenance: from_user_answer` if user-filled |
 
-When merging skills in append mode, preserve `_meta.base_skills` in draft until `write`.
-
 Optional gap `about_me` may remain empty; required gaps must be filled before write.
 
 ### 3. Validate and write artifact
@@ -197,6 +143,8 @@ PYTHONPATH=src python3 -m resume_profile.cli write --input tmp/profile-draft.jso
 ```
 
 Default write path: `artifacts/resume-profile/<translit-target-role>.yaml` (только YAML, без JSON sidecar).
+If the same slug already exists, write a **new** file with a numeric suffix in parentheses:
+`<slug> (2).yaml`, `<slug> (3).yaml`, and so on.
 
 После `write` отправь пользователю нормальное финальное сообщение, например:
 

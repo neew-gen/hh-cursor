@@ -78,7 +78,7 @@ Browser Tab и задаёт вопросы только по незаполне�
 
 ### Edge Cases
 
-- В `artifacts/resume-profile/` нет ни одного сохранённого профиля — вопрос про новый/дополняемый набор навыков не задаётся, сбор начинается как brand-new profile.
+- При повторном запуске `/resume-profile` существующие артефакты не используются как база для нового сбора; каждый запуск начинается с нового draft.
 - Пользователь пропускает Q1 — сбор только через gap-опросник.
 - Пользователь выбрал ввод ссылки в Q1, но сама ссылка не попала в ответ формы — агент принимает URL следующим обычным сообщением без повторного Q1.
 - После выбора `Ввести ссылку на ваше резюме` агент не показывает вторую форму; допустим только обычный текстовый prompt с просьбой вставить ссылку следующим сообщением.
@@ -121,6 +121,8 @@ Browser Tab и задаёт вопросы только по незаполне�
 - **FR-013**: System MUST skip the skills-mode question and initialize a new draft automatically when no saved resume-profile artifacts exist.
 - **FR-014**: If the user chooses the Q1 option to provide a link but the URL is not captured inside that same `AskQuestion` response, the system MUST accept the hh.ru resume link in the very next plain chat message without re-asking Q1 or showing any extra intermediary questionnaire step.
 - **FR-015**: After the user chooses the Q1 option to provide a link, the system MUST use plain chat text for any immediate follow-up prompt requesting the URL and MUST NOT render a second `AskQuestion` for that handoff.
+- **FR-016**: System MUST always start `/resume-profile` as a brand-new collection run and MUST NOT ask whether to update, supplement, or reuse an existing artifact.
+- **FR-017**: When the derived artifact path `artifacts/resume-profile/<target-role-slug>.yaml` already exists, the system MUST create a new file by appending a numeric suffix in parentheses, for example `frontend-developer-vue (2).yaml`.
 
 ### Key Entities
 
@@ -136,6 +138,7 @@ Browser Tab и задаёт вопросы только по незаполне�
 ### Measurable Outcomes
 
 - **SC-001**: После успешного сбора создаётся ровно один финальный файл `artifacts/resume-profile/<target-role-slug>.yaml`.
+- **SC-001a**: Если файл с тем же slug уже существует, новый запуск создаёт новый YAML-файл с суффиксом `(2)`, `(3)` и так далее, не перезаписывая предыдущие артефакты.
 - **SC-002**: Артефакт содержит все required MVP-поля hh или явный флаг отсутствия опыта/
   образования.
 - **SC-003**: При skip Q1 все собранные поля имеют provenance `from_user_answer`.

@@ -1,0 +1,12 @@
+{
+  "url": "https://hh.ru/vacancy/12345678",
+  "title": "Frontend-разработчик",
+  "company": "ТехКомпания",
+  "requirements": [
+    "Опыт коммерческой разработки от 3 лет",
+    "Знание Vue 3 и TypeScript",
+    "Опыт работы с REST API"
+  ],
+  "key_skills": ["Vue", "TypeScript", "JavaScript", "REST"],
+  "extracted_at": "2026-07-09T12:00:00+00:00"
+}

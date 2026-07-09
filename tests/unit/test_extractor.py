@@ -166,6 +166,7 @@ class ExtractorTests(unittest.TestCase):
         self.assertTrue(profile.work_experience[0].is_current)
         self.assertEqual(profile.work_experience[1].company, "Acme Corp")
         self.assertEqual(profile.skills_hard[0].name, "JavaScript")
+        self.assertEqual(profile.skills_hard[0].level, "")
         self.assertNotIn("...", [skill.name for skill in profile.skills_hard])
         self.assertIn("https://example.com", profile.about_me or "")
 
@@ -173,6 +174,90 @@ class ExtractorTests(unittest.TestCase):
         html = '<html><body><li class="resume-experience"><span class="resume-experience__company">Example Inc</span><p class="bloko-form-hint">Июнь 2025 — сейчас</p><p class="resume-experience__position">Dev</p><p>- work</p></li></body></html>'
         profile = extract_resume_content(html)
         self.assertEqual(profile.work_experience[0].company, "Example Inc")
+
+    def test_extract_from_download_html_with_extra_attributes(self):
+        html = """
+        <html><body>
+        <p class="resume__position" data-cursor-ref="e1">Frontend Developer (Vue)</p>
+        <li class="resume-profession-role" data-cursor-ref="e2">Программист, разработчик</li>
+        <li class="resume-experience" data-cursor-ref="e3">
+            <span class="resume-experience__company" data-cursor-ref="e4">Example Inc</span>
+            <p class="bloko-form-hint" data-cursor-ref="e5">Июнь 2025 — настоящее время 1 год 2 месяца</p>
+            <p class="resume-experience__position" data-cursor-ref="e6">Ведущий программист</p>
+            <p data-cursor-ref="e7">- CRM<br/>Стек: Vue, TypeScript</p>
+        </li>
+        <p class="resume__block" data-cursor-ref="e8">Образование</p>
+        <ul><li class="resume-education" data-cursor-ref="e9">
+            <span class="resume-education__name" data-cursor-ref="e10">MSU</span>
+            <p class="bloko-form-hint" data-cursor-ref="e11">2015</p>
+            <p class="bloko-form-hint" data-cursor-ref="e12">Среднее специальное</p>
+        </li><p data-cursor-ref="e13">Геодезия</p></ul>
+        <span class="bloko-form-hint" data-cursor-ref="e14">Навыки</span>
+        <p class="resume-skils__item" data-cursor-ref="e15"><span>JavaScript; </span><span>Vue.js; </span><span>Nuxt; </span></p>
+        <span class="bloko-form-hint" data-cursor-ref="e16">Обо мне</span>
+        <p class="resume-skils__item" data-cursor-ref="e17">Полный текст о себе<br/>https://example.com</p>
+        </body></html>
+        """
+        profile = extract_from_download_html(html, resume_link="https://hh.ru/resume/abc")
+        self.assertEqual(profile.target_role, "Frontend Developer (Vue)")
+        self.assertEqual(profile.work_experience[0].company, "Example Inc")
+        self.assertEqual([skill.name for skill in profile.skills_hard], ["JavaScript", "Vue.js", "Nuxt"])
+        self.assertEqual([skill.level for skill in profile.skills_hard], ["", "", ""])
+        self.assertEqual(profile.education[0].institution, "MSU")
+        self.assertIn("https://example.com", profile.about_me or "")
+
+    def test_extract_from_download_html_parses_resume_skills_class(self):
+        html = """
+        <html><body>
+        <li class="resume-skills">
+            <span class="bloko-form-hint">Навыки</span>
+            <p class="resume-skills__item">
+                <span>JavaScript; </span><span>TypeScript; </span><span>Vue.js; </span>
+            </p>
+        </li>
+        </body></html>
+        """
+        profile = extract_from_download_html(html, resume_link="https://hh.ru/resume/abc")
+        self.assertEqual(
+            [skill.name for skill in profile.skills_hard],
+            ["JavaScript", "TypeScript", "Vue.js"],
+        )
+
+    def test_extract_from_download_html_deduplicates_entries_and_parses_languages(self):
+        html = """
+        <html><body>
+        <p class="resume__position">Frontend Developer</p>
+        <li class="resume-profession-role">Программист, разработчик</li>
+        <li class="resume-profession-role">Программист, разработчик</li>
+        <li class="resume-experience">
+            <span class="resume-experience__company">Example Inc</span>
+            <p class="bloko-form-hint">Июнь 2025 — настоящее время 1 год 2 месяца</p>
+            <p class="resume-experience__position">Ведущий программист</p>
+            <p>- CRM<br/>Стек: Vue</p>
+        </li>
+        <li class="resume-experience">
+            <span class="resume-experience__company">Example Inc</span>
+            <p class="bloko-form-hint">Июнь 2025 — настоящее время 1 год 2 месяца</p>
+            <p class="resume-experience__position">Ведущий программист</p>
+            <p>- CRM<br/>Стек: Vue</p>
+        </li>
+        <span class="bloko-form-hint">Навыки</span>
+        <p class="resume-skils__item"><span>JavaScript; </span><span>JavaScript; </span><span>Vue.js; </span></p>
+        <span class="bloko-form-hint">Знание языков</span>
+        <ul class="resume-skils__item">
+            <li data-cursor-ref="e1">Русский <span class="info"> — Родной</span></li>
+            <li data-cursor-ref="e2">Английский <span class="info"> — B1 — Средний</span></li>
+        </ul>
+        </body></html>
+        """
+        profile = extract_from_download_html(html, resume_link="https://hh.ru/resume/abc")
+        self.assertEqual(profile.specializations, ["Программист, разработчик"])
+        self.assertEqual(len(profile.work_experience), 1)
+        self.assertEqual([skill.name for skill in profile.skills_hard], ["JavaScript", "Vue.js"])
+        self.assertEqual(
+            [(lang.name, lang.level) for lang in profile.languages],
+            [("Русский", "Родной"), ("Английский", "B1 — Средний")],
+        )
 
 
 if __name__ == "__main__":

@@ -8,6 +8,7 @@ from resume_profile.artifacts import (
     artifact_path,
     has_saved_artifacts,
     load_artifact,
+    resolve_artifact_path,
     write_artifact_bundle,
 )
 from resume_profile.draft import SKILLS_MODE_APPEND, save_draft
@@ -37,6 +38,18 @@ class ArtifactTests(unittest.TestCase):
             with patch("resume_profile.artifacts.LEGACY_ARTIFACT_PATH", missing_legacy):
                 with patch("resume_profile.artifacts.ARTIFACTS_DIR", artifacts_dir):
                     self.assertTrue(has_saved_artifacts())
+
+    def test_resolve_artifact_path_adds_numeric_suffix_when_slug_exists(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            missing_legacy = Path(tmp) / "legacy.yaml"
+            artifacts_dir = Path(tmp) / "resume-profile"
+            artifacts_dir.mkdir(parents=True, exist_ok=True)
+            existing = artifacts_dir / "frontend-developer-vue.yaml"
+            existing.write_text("target_role: Frontend Developer (Vue)\n", encoding="utf-8")
+            with patch("resume_profile.artifacts.LEGACY_ARTIFACT_PATH", missing_legacy):
+                with patch("resume_profile.artifacts.ARTIFACTS_DIR", artifacts_dir):
+                    resolved = resolve_artifact_path("Frontend Developer (Vue)")
+                    self.assertEqual(resolved.name, "frontend-developer-vue (2).yaml")
 
     def test_write_append_merges_base_skills(self):
         with tempfile.TemporaryDirectory() as tmp:
