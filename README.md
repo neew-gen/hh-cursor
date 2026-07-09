@@ -2,14 +2,54 @@
 
 Проект для автоматизации работы с hh.ru через агента Cursor.
 
-## Как включить Browser Tab
+## Настройка
+
+### Шаг 1. Установите Cursor
+
+Скачайте и установите [Cursor](https://cursor.com) — без него агент и Browser Tab недоступны.
+
+### Шаг 2. Настройте Browser Tab
 
 1. Откройте **Cursor Settings** (`Cmd + ,` на macOS или `Ctrl + ,` на Windows/Linux).
 2. Перейдите в раздел **Tools & MCP**.
 3. Найдите пункт **Browser Automation**.
 4. Включите его и выберите режим **Browser Tab**.
 
-## Что делать при SSL ошибках
+## Навыки
+
+Навыки выполняются по порядку. Каждый следующий шаг опирается на артефакты предыдущих. Для запуска введите команду в чат с агентом.
+
+### 001. `/resume-intelligence` (опционально)
+
+**Не обязателен** — запускать не нужно при каждом цикле. Достаточно один раз или когда хотите обновить рекомендации.
+
+Собирает из интернета актуальные сигналы о том, как HR и ATS сейчас обрабатывают резюме, что в них лучше писать и как их оформлять. Результат — `artifacts/resume-intelligence.md`. Его используют `/resume-create` и `/job-apply`, если файл уже есть.
+
+### 002. `/resume-profile`
+
+Собирает данные о пользователе для заполнения резюме на hh.ru. Можно передать ссылку на своё резюме на HeadHunter — агент извлечёт данные через Browser Tab. Или пропустить ссылку и ответить на вопросы по шагам: агент спросит только то, чего не хватает для обязательных полей формы hh.ru.
+
+Результат — `artifacts/resume-profile/<slug>.yaml` (slug из целевой должности, например `frontend-developer.yaml`).
+
+### 003. `/resume-create`
+
+Создаёт или обновляет резюме на hh.ru на основе данных из `/resume-profile`. При наличии `artifacts/resume-intelligence.md` переписывает «О себе» и описания опыта по рекомендациям — без выдумывания фактов. Затем открывает HeadHunter в Browser Tab и заполняет форму.
+
+Если в профиле была ссылка на существующее резюме — можно выбрать редактирование; иначе создаётся новое. Агент останавливается до публикации: финальное сохранение на hh.ru делаете вы.
+
+Результат — `artifacts/resume-create/<slug>.yaml` (fill-plan с текстами и планом заполнения).
+
+### 004. `/job-apply`
+
+Откликается на вакансию hh.ru. Нужна ссылка на вакансию и профиль из `/resume-profile`. Агент извлекает требования вакансии, пишет сопроводительное письмо под вакансию (с учётом `resume-intelligence`, если есть) и открывает HeadHunter в Browser Tab: нажимает «Откликнуться», выбирает резюме и вставляет письмо.
+
+Выбор резюме запоминается для следующих откликов. Агент останавливается до отправки — финальный клик «Отправить» делаете вы.
+
+Результат — `artifacts/job-apply/<vacancy-slug>.yaml` (application-plan с письмом и снимком вакансии).
+
+## Устранение проблем
+
+### SSL ошибки
 
 Если при fetch появляется ошибка вида `SSL: CERTIFICATE_VERIFY_FAILED`, для Python.org
 сборки на macOS часто помогает установка сертификатов командой:
@@ -18,17 +58,6 @@
 open "/Applications/Python 3.8/Install Certificates.command"
 ```
 
-### Дополнительно
+### Browser Automation и MCP
 
-- Встроенный MCP `cursor-ide-browser` не добавляется в `.cursor/mcp.json` — он включается только через **Browser Automation**.
-
-## Workflow: четыре шага
-
-| Шаг | Skill | Артефакт |
-|-----|-------|----------|
-| 1 | resume-intelligence (CLI) | `artifacts/resume-intelligence.md` |
-| 2 | `/resume-profile` | `artifacts/resume-profile/<slug>.yaml` |
-| 3 | `/resume-create` | `artifacts/resume-create/<slug>.yaml` |
-| 4 | `/job-apply` | `artifacts/job-apply/<vacancy-slug>.yaml` |
-
-Подробнее: `specs/003-resume-create/quickstart.md`, `specs/004-job-apply/quickstart.md`.
+Встроенный MCP `cursor-ide-browser` не добавляется в `.cursor/mcp.json` — он включается только через **Browser Automation** в настройках Cursor (см. шаг 2 выше).
