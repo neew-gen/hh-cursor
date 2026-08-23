@@ -1,0 +1,11 @@
+{
+  "name": "vue-use-api-call",
+  "description": "Vue composable for API calls with reactive state",
+  "dependencies": {
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}

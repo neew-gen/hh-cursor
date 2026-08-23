@@ -1,0 +1,13 @@
+{
+  "url": "https://www.upwork.com/jobs/~0123456789abcdef",
+  "title": "Senior Frontend Developer",
+  "client": "TechStartup Inc",
+  "description": "Build a React dashboard with TypeScript and REST API integration.",
+  "budget_type": "hourly",
+  "key_skills": ["React", "TypeScript", "JavaScript", "REST"],
+  "screening_questions": [
+    "Describe your experience with React dashboards.",
+    "What is your hourly rate?"
+  ],
+  "extracted_at": "2026-08-23T10:00:00+00:00"
+}

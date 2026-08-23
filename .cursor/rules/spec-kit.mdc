@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Spec Kit — hh-cursor
 
-Проект **hh-cursor**: автоматизация hh.ru через агента Cursor (Browser Tab / MCP). Spec Kit установлен (`cursor-agent`, `.specify/`).
+Проект **hh-cursor**: автоматизация **hh.ru** и **Upwork** через агента Cursor (Browser Tab / MCP). Spec Kit установлен (`cursor-agent`, `.specify/`).
 
 Перед реализацией — SDD. **Не пиши код без артефактов.** Не делай git commit — только по явной просьбе пользователя.
 
@@ -22,7 +22,7 @@ alwaysApply: true
 
 ## Skills в slash-меню
 
-В `.cursor/skills/` лежат **только skills фич** (сейчас: `/resume-profile` для 002, `/resume-create` для 003, `/job-apply` для 004). Общие SDD-skills Spec Kit — в `.specify/skills/` и **не** попадают в autocomplete `/`.
+В `.cursor/skills/` лежат **только skills фич** (hh: `/resume-profile` для 002, `/resume-create` для 003, `/job-apply` для 004; Upwork: `/upwork-intelligence` для 005, `/upwork-profile` для 006, `/upwork-proposal` для 007, `/upwork-profile-create` для 008; generic: `/project-portfolio-extract` для 009). Общие SDD-skills Spec Kit — в `.specify/skills/` и **не** попадают в autocomplete `/`.
 
 Новый skill фичи: `.cursor/skills/<имя-фичи>/SKILL.md` (имя = slug из `specs/###-<имя-фичи>/`) + запись в `specs/###-*/tasks.md`.
 
@@ -49,7 +49,7 @@ alwaysApply: true
 7. **Scope** — минимальный diff; не трогай несвязанный код.
 8. **Секреты** — пароли, cookies, токены не в репо; только env / локальные файлы в `.gitignore`.
 9. **Тесты** — без комментариев внутри тестов.
-10. **Браузер** — сценарии hh.ru через Browser Tab (см. README); в plan указывай шаги UI и точки остановки при captcha/login.
+10. **Браузер** — сценарии hh.ru и upwork.com через Browser Tab (см. README); в plan указывай шаги UI и точки остановки при captcha/login/Connects.
 
 ## Конституция
 

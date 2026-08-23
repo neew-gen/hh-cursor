@@ -1,22 +1,14 @@
 <!--
 Sync Impact Report
-Version change: template -> 1.0.0
+Version change: 1.0.0 -> 1.1.0
 Modified principles:
-- Added I. Browser-First Evidence Collection
-- Added II. Minimal Scope, Maximum Traceability
-- Added III. Source Trust Ranking
-- Added IV. Reusable Artifact Output
-- Added V. Secret-Safe Automation
+- I. Browser-First Evidence Collection — extended to target platforms (hh.ru, upwork.com)
 Added sections:
-- Operational Constraints
-- Delivery Workflow
+- None
 Removed sections:
 - None
 Templates requiring updates:
-- ✅ no template changes required: .specify/templates/spec-template.md
-- ✅ no template changes required: .specify/templates/plan-template.md
-- ✅ no template changes required: .specify/templates/tasks-template.md
-- ✅ runtime docs aligned later in feature work: README.md
+- ✅ runtime docs aligned in feature work: README.md, .cursor/rules/spec-kit.mdc
 Deferred follow-up TODOs:
 - None
 -->
@@ -25,11 +17,12 @@ Deferred follow-up TODOs:
 ## Core Principles
 
 ### I. Browser-First Evidence Collection
-All workflows that require interaction with `hh.ru` MUST prefer Browser Tab or the
-project's browser-capable automation path over unofficial APIs or hidden browser state.
-Plans MUST document the exact UI path, expected manual checkpoints, and explicit stop
-conditions for login, captcha, paywalls, or permission prompts. This keeps the project
-aligned with the observable user experience and reduces brittle hidden integrations.
+All workflows that require interaction with a target platform (`hh.ru`, `upwork.com`, or
+future platforms added via SDD) MUST prefer Browser Tab or the project's browser-capable
+automation path over unofficial APIs or hidden browser state. Plans MUST document the exact
+UI path per platform, expected manual checkpoints, and explicit stop conditions for login,
+captcha, paywalls, Connects confirmation, KYC, or permission prompts. This keeps the
+project aligned with the observable user experience and reduces brittle hidden integrations.
 
 ### II. Minimal Scope, Maximum Traceability
 Every feature MUST start with the smallest independently valuable slice and MUST preserve
@@ -41,11 +34,11 @@ growth and keeps reviewable diffs small.
 ### III. Source Trust Ranking
 Any feature that synthesizes hiring guidance, resume advice, or market claims MUST classify
 sources by trust tier and MUST keep citations attached to derived recommendations.
-Primary evidence includes official `hh` rules/help, first-party vendor documentation, and
-academic research. Secondary evidence includes career media, recruiter interviews, and
-market reviews. Heuristic evidence includes SEO-style aggregators, resume checkers, and
-other low-accountability advice sources. Contradictions across tiers MUST be surfaced,
-never silently flattened.
+Primary evidence includes official platform rules/help (`hh`, Upwork Help), first-party
+vendor documentation, and academic research. Secondary evidence includes career media,
+recruiter interviews, and market reviews. Heuristic evidence includes SEO-style
+aggregators, resume checkers, and other low-accountability advice sources. Contradictions
+across tiers MUST be surfaced, never silently flattened.
 
 ### IV. Reusable Artifact Output
 Features that generate guidance for later agent steps MUST produce stable, reusable
@@ -104,4 +97,4 @@ Compliance policy:
 - If a feature cannot satisfy a principle, the blocking reason and mitigation MUST be
   explicit in the feature artifacts.
 
-**Version**: 1.0.0 | **Ratified**: 2026-07-07 | **Last Amended**: 2026-07-07
+**Version**: 1.1.0 | **Ratified**: 2026-07-07 | **Last Amended**: 2026-08-22

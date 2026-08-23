@@ -1,0 +1,46 @@
+collected_at: "2026-08-23T10:00:00+00:00"
+input_mode: questionnaire_with_link
+profile_link: "https://www.upwork.com/freelancers/sample123"
+profile_title: Frontend Developer
+overview: |
+  Frontend developer with experience building user interfaces and API integrations.
+  I enjoy writing clear code, improving development processes, and shipping to production.
+hourly_rate: "45"
+skills:
+  - JavaScript
+  - TypeScript
+  - Vue.js
+  - REST API
+work_experience_status: has_experience
+work_experience:
+  - company: Acme Corp
+    position: Frontend Developer
+    start_date: "2022-01"
+    end_date: "2023-12"
+    is_current: false
+    description: |
+      Built product interfaces and integrated REST APIs.
+      Improved performance and maintained UI Kit.
+    provenance: from_profile_link
+  - company: Beta LLC
+    position: Senior Frontend Developer
+    start_date: "2024-01"
+    end_date: null
+    is_current: true
+    description: |
+      Develop internal services and conduct code reviews.
+      Set up development processes and support releases.
+    provenance: from_profile_link
+education:
+  - institution: MSU
+    degree: Bachelor
+    specialty: Computer Science
+    graduation_year: 2020
+    provenance: from_profile_link
+portfolio_links:
+  - "https://github.com/sample"
+limitations: []
+sources:
+  profile_link_used: true
+  fields_from_link: 12
+  fields_from_user: 0

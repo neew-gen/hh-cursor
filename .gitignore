@@ -1,11 +1,26 @@
 # Local resume profile artifacts (per target role)
 artifacts/resume-profile/
 
+# Upwork profile artifacts (feature 006)
+artifacts/upwork-profile/
+
 # Fill plans and browser fill reports (feature 003)
 artifacts/resume-create/
 
 # Application plans and reports (feature 004)
 artifacts/job-apply/
+
+# Proposal plans and reports (feature 007)
+artifacts/upwork-proposal/
+
+# Fill plans and browser fill reports (feature 008)
+artifacts/upwork-profile-create/
+
+# Portfolio project extracts (feature 009)
+artifacts/project-portfolio-extract/
+
+# Upwork intelligence artifact (feature 005)
+artifacts/upwork-intelligence.md
 
 # Drafts and browser extracts
 tmp/
@@ -14,3 +29,6 @@ tmp/
 __pycache__/
 *.py[cod]
 .Python
+
+# macOS
+.DS_Store
